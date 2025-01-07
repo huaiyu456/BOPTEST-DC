@@ -1,0 +1,1413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fmiModelDescription
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  fmiVersion="2.0"
+  modelName="SimpleRC"
+  guid="{a34352e6-0a2d-4898-9169-167b53153493}"
+  description="A simple thermal R1C1 model with sinusoidal outside air temperature and a feedback controlled heater."
+  version="1"
+  generationTool="Dymola Version 2023x, 2022-10-07"
+  generationDateAndTime="2025-01-01T09:11:45Z"
+  variableNamingConvention="structured"
+  numberOfEventIndicators="4">
+  <CoSimulation
+    modelIdentifier="SimpleRC"
+    canHandleVariableCommunicationStepSize="true"
+    canInterpolateInputs="true"
+    maxOutputDerivativeOrder="1"
+    canNotUseMemoryManagementFunctions="true"
+    canGetAndSetFMUstate="true"
+    canSerializeFMUstate="true"
+    providesDirectionalDerivative="true"/>
+  <UnitDefinitions>
+    <Unit
+      name="1"/>
+    <Unit
+      name="1/K">
+      <BaseUnit K="-1"/>
+    </Unit>
+    <Unit
+      name="Hz">
+      <BaseUnit s="-1"/>
+    </Unit>
+    <Unit
+      name="J/K">
+      <BaseUnit kg="1"
+        m="2"
+        s="-2"
+        K="-1"/>
+    </Unit>
+    <Unit
+      name="K">
+      <BaseUnit K="1"/>
+      <DisplayUnit
+        name="degC"
+        offset="-273.15"/>
+    </Unit>
+    <Unit
+      name="K/W">
+      <BaseUnit kg="-1"
+        m="-2"
+        s="3"
+        K="1"/>
+    </Unit>
+    <Unit
+      name="K/s">
+      <BaseUnit s="-1"
+        K="1"/>
+    </Unit>
+    <Unit
+      name="W">
+      <BaseUnit kg="1"
+        m="2"
+        s="-3"/>
+    </Unit>
+    <Unit
+      name="rad">
+      <BaseUnit rad="1"/>
+      <DisplayUnit
+        name="deg"
+        factor="57.29577951308232"/>
+    </Unit>
+    <Unit
+      name="s">
+      <BaseUnit s="1"/>
+    </Unit>
+  </UnitDefinitions>
+  <TypeDefinitions>
+    <SimpleType
+      name="Modelica.Blocks.Interfaces.BooleanInput">
+      <Boolean/>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Blocks.Interfaces.BooleanOutput">
+      <Boolean/>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Blocks.Interfaces.RealInput">
+      <Real/>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Blocks.Interfaces.RealOutput">
+      <Real/>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Units.SI.Angle">
+      <Real
+        quantity="Angle"
+        unit="rad"
+        displayUnit="deg"/>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Units.SI.Frequency">
+      <Real
+        quantity="Frequency"
+        unit="Hz"/>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Units.SI.HeatCapacity">
+      <Real
+        quantity="HeatCapacity"
+        unit="J/K"/>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Units.SI.HeatFlowRate">
+      <Real
+        quantity="Power"
+        unit="W"/>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Units.SI.LinearTemperatureCoefficient">
+      <Real
+        quantity="LinearTemperatureCoefficient"
+        unit="1/K"/>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Units.SI.Temperature">
+      <Real
+        quantity="ThermodynamicTemperature"
+        unit="K"
+        displayUnit="degC"
+        min="0.0"
+        nominal="300.0"/>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Units.SI.TemperatureDifference">
+      <Real
+        quantity="ThermodynamicTemperature"
+        unit="K"
+        relativeQuantity="true"/>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Units.SI.TemperatureSlope">
+      <Real
+        quantity="TemperatureSlope"
+        unit="K/s"/>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Units.SI.ThermalResistance">
+      <Real
+        quantity="ThermalResistance"
+        unit="K/W"/>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Units.SI.Time">
+      <Real
+        quantity="Time"
+        unit="s"/>
+    </SimpleType>
+    <SimpleType
+      name="Buildings.Utilities.IO.SignalExchange.SignalTypes.SignalsForKPIs">
+      <Enumeration>
+        <Item name="None"
+          value="1"
+          description="Not used for KPI"/>
+        <Item name="AirZoneTemperature"
+          value="2"
+          description="Air zone temperature"/>
+        <Item name="RadiativeZoneTemperature"
+          value="3"
+          description="Radiative zone temperature"/>
+        <Item name="OperativeZoneTemperature"
+          value="4"
+          description="Operative zone temperature"/>
+        <Item name="RelativeHumidity"
+          value="5"
+          description="Relative humidity"/>
+        <Item name="CO2Concentration"
+          value="6"
+          description="CO2 concentration"/>
+        <Item name="ElectricPower"
+          value="7"
+          description="Electric power from grid"/>
+        <Item name="DistrictHeatingPower"
+          value="8"
+          description="Thermal power from district heating"/>
+        <Item name="GasPower"
+          value="9"
+          description="Thermal power from natural gas"/>
+        <Item name="BiomassPower"
+          value="10"
+          description="Thermal power from biomass"/>
+        <Item name="SolarThermalPower"
+          value="11"
+          description="Thermal power from solar thermal"/>
+        <Item name="FreshWaterFlowRate"
+          value="12"
+          description="FreshWaterFlowRate"/>
+      </Enumeration>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Blocks.Types.Init">
+      <Enumeration>
+        <Item name="NoInit"
+          value="1"
+          description="No initialization (start values are used as guess values with fixed=false)"/>
+        <Item name="SteadyState"
+          value="2"
+          description="Steady state initialization (derivatives of states are zero)"/>
+        <Item name="InitialState"
+          value="3"
+          description="Initialization with initial states"/>
+        <Item name="InitialOutput"
+          value="4"
+          description="Initialization with initial outputs (and steady state of the states if possible)"/>
+      </Enumeration>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Blocks.Types.LimiterHomotopy">
+      <Enumeration>
+        <Item name="NoHomotopy"
+          value="1"
+          description="Homotopy is not used"/>
+        <Item name="Linear"
+          value="2"
+          description="Simplified model without limits"/>
+        <Item name="UpperLimit"
+          value="3"
+          description="Simplified model fixed at upper limit"/>
+        <Item name="LowerLimit"
+          value="4"
+          description="Simplified model fixed at lower limit"/>
+      </Enumeration>
+    </SimpleType>
+    <SimpleType
+      name="Modelica.Blocks.Types.SimpleController">
+      <Enumeration>
+        <Item name="P"
+          value="1"
+          description="P controller"/>
+        <Item name="PI"
+          value="2"
+          description="PI controller"/>
+        <Item name="PD"
+          value="3"
+          description="PD controller"/>
+        <Item name="PID"
+          value="4"
+          description="PID controller"/>
+      </Enumeration>
+    </SimpleType>
+  </TypeDefinitions>
+  <DefaultExperiment startTime="0.0"
+    stopTime="60.0"
+    tolerance="1E-06"/>
+  <ModelVariables>
+    <!-- Index for next variable = 1 -->
+    <ScalarVariable
+      name="cap.C"
+      valueReference="16777216"
+      description="Heat capacity of element (= cp*m)"
+      causality="parameter"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Units.SI.HeatCapacity"
+        start="1000000.0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 2 -->
+    <ScalarVariable
+      name="cap.T"
+      valueReference="33554432"
+      description="Temperature of element"
+      initial="exact">
+      <Real
+        declaredType="Modelica.Units.SI.Temperature"
+        start="293.15"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 3 -->
+    <ScalarVariable
+      name="der(cap.T)"
+      valueReference="587202560"
+      description="der(Temperature of element)">
+      <Real
+        unit="K/s"
+        derivative="2"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 4 -->
+    <ScalarVariable
+      name="cap.der_T"
+      valueReference="587202560"
+      description="Time derivative of temperature (= der(T))">
+      <Real
+        declaredType="Modelica.Units.SI.TemperatureSlope"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 5 -->
+    <ScalarVariable
+      name="cap.port.T"
+      valueReference="33554432"
+      description="Port temperature">
+      <Real
+        declaredType="Modelica.Units.SI.Temperature"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 6 -->
+    <ScalarVariable
+      name="cap.port.Q_flow"
+      valueReference="637534237"
+      description="Heat flow rate (positive if flowing from outside into the component)">
+      <Real
+        declaredType="Modelica.Units.SI.HeatFlowRate"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 7 -->
+    <ScalarVariable
+      name="res.Q_flow"
+      valueReference="637534238"
+      description="Heat flow rate from port_a -&gt; port_b">
+      <Real
+        declaredType="Modelica.Units.SI.HeatFlowRate"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 8 -->
+    <ScalarVariable
+      name="res.dT"
+      valueReference="637534239"
+      description="port_a.T - port_b.T">
+      <Real
+        declaredType="Modelica.Units.SI.TemperatureDifference"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 9 -->
+    <ScalarVariable
+      name="res.port_a.T"
+      valueReference="637534240"
+      description="Port temperature">
+      <Real
+        declaredType="Modelica.Units.SI.Temperature"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 10 -->
+    <ScalarVariable
+      name="res.port_a.Q_flow"
+      valueReference="637534238"
+      description="Heat flow rate (positive if flowing from outside into the component)">
+      <Real
+        declaredType="Modelica.Units.SI.HeatFlowRate"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 11 -->
+    <ScalarVariable
+      name="res.port_b.T"
+      valueReference="33554432"
+      description="Port temperature">
+      <Real
+        declaredType="Modelica.Units.SI.Temperature"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 12 -->
+    <ScalarVariable
+      name="res.port_b.Q_flow"
+      valueReference="637534241"
+      description="Heat flow rate (positive if flowing from outside into the component)">
+      <Real
+        declaredType="Modelica.Units.SI.HeatFlowRate"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 13 -->
+    <ScalarVariable
+      name="res.R"
+      valueReference="16777217"
+      description="Constant thermal resistance of material"
+      causality="parameter"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Units.SI.ThermalResistance"
+        start="0.01"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 14 -->
+    <ScalarVariable
+      name="senTZone.T"
+      valueReference="33554432"
+      description="Absolute temperature as output signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"
+        unit="K"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 15 -->
+    <ScalarVariable
+      name="senTZone.port.T"
+      valueReference="33554432"
+      description="Port temperature">
+      <Real
+        declaredType="Modelica.Units.SI.Temperature"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 16 -->
+    <ScalarVariable
+      name="senTZone.port.Q_flow"
+      valueReference="100663296"
+      description="Heat flow rate (positive if flowing from outside into the component)"
+      variability="constant">
+      <Real
+        declaredType="Modelica.Units.SI.HeatFlowRate"
+        start="0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 17 -->
+    <ScalarVariable
+      name="preTOut.port.T"
+      valueReference="637534240"
+      description="Port temperature">
+      <Real
+        declaredType="Modelica.Units.SI.Temperature"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 18 -->
+    <ScalarVariable
+      name="preTOut.port.Q_flow"
+      valueReference="637534241"
+      description="Heat flow rate (positive if flowing from outside into the component)">
+      <Real
+        declaredType="Modelica.Units.SI.HeatFlowRate"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 19 -->
+    <ScalarVariable
+      name="preTOut.T"
+      valueReference="637534240">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"
+        unit="K"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 20 -->
+    <ScalarVariable
+      name="souTOut.amplitude"
+      valueReference="16777218"
+      description="Amplitude of sine wave"
+      causality="parameter"
+      variability="tunable">
+      <Real start="10"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 21 -->
+    <ScalarVariable
+      name="souTOut.f"
+      valueReference="16777219"
+      description="Frequency of sine wave"
+      causality="parameter"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Units.SI.Frequency"
+        start="1.1574074074074073E-05"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 22 -->
+    <ScalarVariable
+      name="souTOut.phase"
+      valueReference="16777220"
+      description="Phase of sine wave"
+      causality="parameter"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Units.SI.Angle"
+        start="0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 23 -->
+    <ScalarVariable
+      name="souTOut.y"
+      valueReference="637534240"
+      description="Connector of Real output signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 24 -->
+    <ScalarVariable
+      name="souTOut.offset"
+      valueReference="16777221"
+      description="Offset of output signal y"
+      causality="parameter"
+      variability="tunable">
+      <Real start="293.15"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 25 -->
+    <ScalarVariable
+      name="souTOut.startTime"
+      valueReference="16777222"
+      description="Output y = offset for time &lt; startTime"
+      causality="parameter"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Units.SI.Time"
+        start="0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 26 -->
+    <ScalarVariable
+      name="set.height"
+      valueReference="16777223"
+      description="Height of step"
+      causality="parameter"
+      variability="tunable">
+      <Real start="2"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 27 -->
+    <ScalarVariable
+      name="set.y"
+      valueReference="637534236"
+      description="Connector of Real output signal"
+      variability="discrete">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 28 -->
+    <ScalarVariable
+      name="set.offset"
+      valueReference="16777224"
+      description="Offset of output signal y"
+      causality="parameter"
+      variability="tunable">
+      <Real start="293.15"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 29 -->
+    <ScalarVariable
+      name="set.startTime"
+      valueReference="16777225"
+      description="Output y = offset for time &lt; startTime"
+      causality="parameter"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Units.SI.Time"
+        start="86400"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 30 -->
+    <ScalarVariable
+      name="con.u_s"
+      valueReference="637534236"
+      description="Connector of setpoint input signal"
+      variability="discrete">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 31 -->
+    <ScalarVariable
+      name="con.u_m"
+      valueReference="33554432"
+      description="Connector of measurement input signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 32 -->
+    <ScalarVariable
+      name="con.y"
+      valueReference="637534242"
+      description="Connector of actuator output signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"
+        min="-10000.0"
+        max="10000.0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 33 -->
+    <ScalarVariable
+      name="con.controlError"
+      valueReference="905969699"
+      description="Control error (set point - measurement)">
+      <Real/>
+    </ScalarVariable>
+    <!-- Index for next variable = 34 -->
+    <ScalarVariable
+      name="con.controllerType"
+      valueReference="100663297"
+      description="Type of controller"
+      variability="constant">
+      <Enumeration
+        declaredType="Modelica.Blocks.Types.SimpleController"
+        start="1"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 35 -->
+    <ScalarVariable
+      name="con.k"
+      valueReference="16777226"
+      description="Gain of controller"
+      causality="parameter"
+      variability="tunable">
+      <Real
+        unit="1"
+        min="0.0"
+        start="2000"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 36 -->
+    <ScalarVariable
+      name="con.Ti"
+      valueReference="16777227"
+      description="Time constant of Integrator block"
+      causality="parameter"
+      variability="fixed">
+      <Real
+        declaredType="Modelica.Units.SI.Time"
+        min="1E-60"
+        start="0.5"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 37 -->
+    <ScalarVariable
+      name="con.Td"
+      valueReference="16777228"
+      description="Time constant of Derivative block"
+      causality="parameter"
+      variability="fixed">
+      <Real
+        declaredType="Modelica.Units.SI.Time"
+        min="0.0"
+        start="0.1"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 38 -->
+    <ScalarVariable
+      name="con.yMax"
+      valueReference="16777229"
+      description="Upper limit of output"
+      causality="parameter"
+      variability="tunable">
+      <Real start="100000"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 39 -->
+    <ScalarVariable
+      name="con.yMin"
+      valueReference="16777230"
+      description="Lower limit of output"
+      causality="parameter"
+      variability="tunable">
+      <Real start="0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 40 -->
+    <ScalarVariable
+      name="con.wp"
+      valueReference="16777231"
+      description="Set-point weight for Proportional block (0..1)"
+      causality="parameter"
+      variability="tunable">
+      <Real min="0.0"
+        start="1"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 41 -->
+    <ScalarVariable
+      name="con.wd"
+      valueReference="16777232"
+      description="Set-point weight for Derivative block (0..1)"
+      causality="parameter"
+      variability="fixed">
+      <Real min="0.0"
+        start="0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 42 -->
+    <ScalarVariable
+      name="con.Ni"
+      valueReference="16777233"
+      description="Ni*Ti is time constant of anti-windup compensation"
+      causality="parameter"
+      variability="fixed">
+      <Real min="1E-13"
+        start="0.9"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 43 -->
+    <ScalarVariable
+      name="con.Nd"
+      valueReference="16777234"
+      description="The higher Nd, the more ideal the derivative block"
+      causality="parameter"
+      variability="fixed">
+      <Real min="1E-13"
+        start="10"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 44 -->
+    <ScalarVariable
+      name="con.withFeedForward"
+      valueReference="100663298"
+      description="Use feed-forward input?"
+      variability="constant">
+      <Boolean start="false"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 45 -->
+    <ScalarVariable
+      name="con.kFF"
+      valueReference="16777235"
+      description="Gain of feed-forward input"
+      causality="parameter"
+      variability="tunable">
+      <Real start="1"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 46 -->
+    <ScalarVariable
+      name="con.initType"
+      valueReference="100663299"
+      description="Type of initialization (1: no init, 2: steady state, 3: initial state, 4: initial output)"
+      variability="constant">
+      <Enumeration
+        declaredType="Modelica.Blocks.Types.Init"
+        start="3"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 47 -->
+    <ScalarVariable
+      name="con.xi_start"
+      valueReference="16777236"
+      description="Initial or guess value for integrator output (= integrator state)"
+      causality="parameter"
+      variability="fixed">
+      <Real start="0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 48 -->
+    <ScalarVariable
+      name="con.xd_start"
+      valueReference="16777237"
+      description="Initial or guess value for state of derivative block"
+      causality="parameter"
+      variability="fixed">
+      <Real start="0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 49 -->
+    <ScalarVariable
+      name="con.y_start"
+      valueReference="16777238"
+      description="Initial value of output"
+      causality="parameter"
+      variability="fixed">
+      <Real start="0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 50 -->
+    <ScalarVariable
+      name="con.homotopyType"
+      valueReference="100663300"
+      description="Simplified model for homotopy-based initialization"
+      variability="constant">
+      <Enumeration
+        declaredType="Modelica.Blocks.Types.LimiterHomotopy"
+        start="2"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 51 -->
+    <ScalarVariable
+      name="con.strict"
+      valueReference="100663301"
+      description="= true, if strict limits with noEvent(..)"
+      variability="constant">
+      <Boolean start="false"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 52 -->
+    <ScalarVariable
+      name="con.addP.u1"
+      valueReference="637534236"
+      description="Connector of Real input signal 1"
+      variability="discrete">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 53 -->
+    <ScalarVariable
+      name="con.addP.u2"
+      valueReference="33554432"
+      description="Connector of Real input signal 2">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 54 -->
+    <ScalarVariable
+      name="con.addP.y"
+      valueReference="637534244"
+      description="Connector of Real output signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 55 -->
+    <ScalarVariable
+      name="con.addP.k1"
+      valueReference="100663303"
+      description="Gain of input signal 1"
+      variability="tunable">
+      <Real/>
+    </ScalarVariable>
+    <!-- Index for next variable = 56 -->
+    <ScalarVariable
+      name="con.addP.k2"
+      valueReference="16777239"
+      description="Gain of input signal 2"
+      causality="parameter"
+      variability="tunable">
+      <Real start="-1"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 57 -->
+    <ScalarVariable
+      name="con.P.k"
+      valueReference="16777240"
+      description="Gain value multiplied with input signal"
+      causality="parameter"
+      variability="tunable">
+      <Real
+        unit="1"
+        start="1"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 58 -->
+    <ScalarVariable
+      name="con.P.u"
+      valueReference="637534244"
+      description="Input signal connector">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 59 -->
+    <ScalarVariable
+      name="con.P.y"
+      valueReference="637534245"
+      description="Output signal connector">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 60 -->
+    <ScalarVariable
+      name="con.gainPID.k"
+      valueReference="100663304"
+      description="Gain value multiplied with input signal"
+      variability="tunable">
+      <Real
+        unit="1"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 61 -->
+    <ScalarVariable
+      name="con.gainPID.u"
+      valueReference="637534246"
+      description="Input signal connector">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 62 -->
+    <ScalarVariable
+      name="con.gainPID.y"
+      valueReference="637534247"
+      description="Output signal connector">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 63 -->
+    <ScalarVariable
+      name="con.addPID.k1"
+      valueReference="16777241"
+      description="Gain of input signal 1"
+      causality="parameter"
+      variability="tunable">
+      <Real start="1"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 64 -->
+    <ScalarVariable
+      name="con.addPID.k2"
+      valueReference="16777242"
+      description="Gain of input signal 2"
+      causality="parameter"
+      variability="tunable">
+      <Real start="1"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 65 -->
+    <ScalarVariable
+      name="con.addPID.k3"
+      valueReference="16777243"
+      description="Gain of input signal 3"
+      causality="parameter"
+      variability="tunable">
+      <Real start="1"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 66 -->
+    <ScalarVariable
+      name="con.addPID.u1"
+      valueReference="637534245"
+      description="Connector of Real input signal 1">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 67 -->
+    <ScalarVariable
+      name="con.addPID.u2"
+      valueReference="234881052"
+      description="Connector of Real input signal 2"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 68 -->
+    <ScalarVariable
+      name="con.addPID.u3"
+      valueReference="234881053"
+      description="Connector of Real input signal 3"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 69 -->
+    <ScalarVariable
+      name="con.addPID.y"
+      valueReference="637534246"
+      description="Connector of Real output signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 70 -->
+    <ScalarVariable
+      name="con.limiter.uMax"
+      valueReference="100663305"
+      description="Upper limits of input signals"
+      variability="tunable">
+      <Real/>
+    </ScalarVariable>
+    <!-- Index for next variable = 71 -->
+    <ScalarVariable
+      name="con.limiter.uMin"
+      valueReference="100663306"
+      description="Lower limits of input signals"
+      variability="tunable">
+      <Real/>
+    </ScalarVariable>
+    <!-- Index for next variable = 72 -->
+    <ScalarVariable
+      name="con.limiter.strict"
+      valueReference="100663307"
+      description="= true, if strict limits with noEvent(..)"
+      variability="constant">
+      <Boolean start="false"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 73 -->
+    <ScalarVariable
+      name="con.limiter.homotopyType"
+      valueReference="100663308"
+      description="Simplified model for homotopy-based initialization"
+      variability="constant">
+      <Enumeration
+        declaredType="Modelica.Blocks.Types.LimiterHomotopy"
+        start="2"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 74 -->
+    <ScalarVariable
+      name="con.limiter.u"
+      valueReference="637534248"
+      description="Connector of Real input signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 75 -->
+    <ScalarVariable
+      name="con.limiter.y"
+      valueReference="637534242"
+      description="Connector of Real output signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 76 -->
+    <ScalarVariable
+      name="con.Dzero.k"
+      valueReference="16777244"
+      description="Constant output value"
+      causality="parameter"
+      variability="tunable">
+      <Real start="0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 77 -->
+    <ScalarVariable
+      name="con.Dzero.y"
+      valueReference="234881052"
+      description="Connector of Real output signal"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 78 -->
+    <ScalarVariable
+      name="con.Izero.k"
+      valueReference="16777245"
+      description="Constant output value"
+      causality="parameter"
+      variability="tunable">
+      <Real start="0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 79 -->
+    <ScalarVariable
+      name="con.Izero.y"
+      valueReference="234881053"
+      description="Connector of Real output signal"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 80 -->
+    <ScalarVariable
+      name="con.FFzero.k"
+      valueReference="16777246"
+      description="Constant output value"
+      causality="parameter"
+      variability="tunable">
+      <Real start="0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 81 -->
+    <ScalarVariable
+      name="con.FFzero.y"
+      valueReference="234881054"
+      description="Connector of Real output signal"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 82 -->
+    <ScalarVariable
+      name="con.addFF.u1"
+      valueReference="637534247"
+      description="Connector of Real input signal 1">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 83 -->
+    <ScalarVariable
+      name="con.addFF.u2"
+      valueReference="234881054"
+      description="Connector of Real input signal 2"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 84 -->
+    <ScalarVariable
+      name="con.addFF.y"
+      valueReference="637534248"
+      description="Connector of Real output signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 85 -->
+    <ScalarVariable
+      name="con.addFF.k1"
+      valueReference="16777247"
+      description="Gain of input signal 1"
+      causality="parameter"
+      variability="tunable">
+      <Real start="1"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 86 -->
+    <ScalarVariable
+      name="con.addFF.k2"
+      valueReference="100663311"
+      description="Gain of input signal 2"
+      variability="tunable">
+      <Real/>
+    </ScalarVariable>
+    <!-- Index for next variable = 87 -->
+    <ScalarVariable
+      name="oveAct.u"
+      valueReference="637534242"
+      description="Connector of Real input signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"
+        unit="W"
+        min="-10000.0"
+        max="10000.0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 88 -->
+    <ScalarVariable
+      name="oveAct.y"
+      valueReference="637534242"
+      description="Connector of Real output signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 89 -->
+    <ScalarVariable
+      name="oveAct.boptestOverwrite"
+      valueReference="100663312"
+      description="Parameter that is used by tools to search for overwrite block in models"
+      variability="constant">
+      <Boolean start="true"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 90 -->
+    <ScalarVariable
+      name="oveAct.swi.u1"
+      valueReference="100663313"
+      description="Connector of first Real input signal"
+      variability="constant">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"
+        start="0.0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 91 -->
+    <ScalarVariable
+      name="oveAct.swi.u2"
+      valueReference="100663314"
+      description="Connector of Boolean input signal"
+      variability="constant">
+      <Boolean
+        declaredType="Modelica.Blocks.Interfaces.BooleanInput"
+        start="false"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 92 -->
+    <ScalarVariable
+      name="oveAct.swi.u3"
+      valueReference="637534242"
+      description="Connector of second Real input signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 93 -->
+    <ScalarVariable
+      name="oveAct.swi.y"
+      valueReference="637534242"
+      description="Connector of Real output signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 94 -->
+    <ScalarVariable
+      name="oveAct.uExt.y"
+      valueReference="100663315"
+      description="Value of Real output"
+      variability="constant">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"
+        start="0.0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 95 -->
+    <ScalarVariable
+      name="oveAct.activate.y"
+      valueReference="100663316"
+      description="Value of Boolean output"
+      variability="constant">
+      <Boolean
+        declaredType="Modelica.Blocks.Interfaces.BooleanOutput"
+        start="false"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 96 -->
+    <ScalarVariable
+      name="preHeat.T_ref"
+      valueReference="16777248"
+      description="Reference temperature"
+      causality="parameter"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Units.SI.Temperature"
+        start="293.15"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 97 -->
+    <ScalarVariable
+      name="preHeat.alpha"
+      valueReference="16777249"
+      description="Temperature coefficient of heat flow rate"
+      causality="parameter"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Units.SI.LinearTemperatureCoefficient"
+        start="0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 98 -->
+    <ScalarVariable
+      name="preHeat.Q_flow"
+      valueReference="637534242">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"
+        unit="W"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 99 -->
+    <ScalarVariable
+      name="preHeat.port.T"
+      valueReference="33554432"
+      description="Port temperature">
+      <Real
+        declaredType="Modelica.Units.SI.Temperature"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 100 -->
+    <ScalarVariable
+      name="preHeat.port.Q_flow"
+      valueReference="637534249"
+      description="Heat flow rate (positive if flowing from outside into the component)">
+      <Real
+        declaredType="Modelica.Units.SI.HeatFlowRate"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 101 -->
+    <ScalarVariable
+      name="eff.k"
+      valueReference="16777250"
+      description="Gain value multiplied with input signal"
+      causality="parameter"
+      variability="tunable">
+      <Real
+        unit="1"
+        start="1.0101010101010102"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 102 -->
+    <ScalarVariable
+      name="eff.u"
+      valueReference="637534242"
+      description="Input signal connector">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 103 -->
+    <ScalarVariable
+      name="eff.y"
+      valueReference="905969706"
+      description="Output signal connector">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 104 -->
+    <ScalarVariable
+      name="TRooAir.u"
+      valueReference="33554432"
+      description="Connector of Real input signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 105 -->
+    <ScalarVariable
+      name="TRooAir.y"
+      valueReference="33554432"
+      description="Connector of Real output signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"
+        unit="K"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 106 -->
+    <ScalarVariable
+      name="TRooAir.KPIs"
+      valueReference="100663317"
+      description="Tag with the type of signal for the calculation of the KPIs"
+      variability="constant">
+      <Enumeration
+        declaredType="Buildings.Utilities.IO.SignalExchange.SignalTypes.SignalsForKPIs"
+        start="2"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 107 -->
+    <ScalarVariable
+      name="TRooAir.boptestRead"
+      valueReference="100663318"
+      description="Parameter that is used by tools to search for read block in models"
+      variability="constant">
+      <Boolean start="true"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 108 -->
+    <ScalarVariable
+      name="PHea.u"
+      valueReference="905969707"
+      description="Connector of Real input signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 109 -->
+    <ScalarVariable
+      name="PHea.y"
+      valueReference="905969707"
+      description="Connector of Real output signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"
+        unit="W"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 110 -->
+    <ScalarVariable
+      name="PHea.KPIs"
+      valueReference="100663319"
+      description="Tag with the type of signal for the calculation of the KPIs"
+      variability="constant">
+      <Enumeration
+        declaredType="Buildings.Utilities.IO.SignalExchange.SignalTypes.SignalsForKPIs"
+        start="9"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 111 -->
+    <ScalarVariable
+      name="PHea.boptestRead"
+      valueReference="100663320"
+      description="Parameter that is used by tools to search for read block in models"
+      variability="constant">
+      <Boolean start="true"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 112 -->
+    <ScalarVariable
+      name="abs.u"
+      valueReference="905969706"
+      description="Connector of Real input signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 113 -->
+    <ScalarVariable
+      name="abs.y"
+      valueReference="905969707"
+      description="Connector of Real output signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 114 -->
+    <ScalarVariable
+      name="abs.generateEvent"
+      valueReference="100663321"
+      description="Choose whether events shall be generated"
+      variability="constant">
+      <Boolean start="false"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 115 -->
+    <ScalarVariable
+      name="CO2RooAir.u"
+      valueReference="905969708"
+      description="Connector of Real input signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealInput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 116 -->
+    <ScalarVariable
+      name="CO2RooAir.y"
+      valueReference="905969708"
+      description="Connector of Real output signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 117 -->
+    <ScalarVariable
+      name="CO2RooAir.KPIs"
+      valueReference="100663322"
+      description="Tag with the type of signal for the calculation of the KPIs"
+      variability="constant">
+      <Enumeration
+        declaredType="Buildings.Utilities.IO.SignalExchange.SignalTypes.SignalsForKPIs"
+        start="6"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 118 -->
+    <ScalarVariable
+      name="CO2RooAir.boptestRead"
+      valueReference="100663323"
+      description="Parameter that is used by tools to search for read block in models"
+      variability="constant">
+      <Boolean start="true"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 119 -->
+    <ScalarVariable
+      name="conCO2.amplitude"
+      valueReference="16777251"
+      description="Amplitude of sine wave"
+      causality="parameter"
+      variability="tunable">
+      <Real start="250"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 120 -->
+    <ScalarVariable
+      name="conCO2.f"
+      valueReference="16777252"
+      description="Frequency of sine wave"
+      causality="parameter"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Units.SI.Frequency"
+        start="1.1574074074074073E-05"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 121 -->
+    <ScalarVariable
+      name="conCO2.phase"
+      valueReference="16777253"
+      description="Phase of sine wave"
+      causality="parameter"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Units.SI.Angle"
+        start="0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 122 -->
+    <ScalarVariable
+      name="conCO2.y"
+      valueReference="905969708"
+      description="Connector of Real output signal">
+      <Real
+        declaredType="Modelica.Blocks.Interfaces.RealOutput"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 123 -->
+    <ScalarVariable
+      name="conCO2.offset"
+      valueReference="16777254"
+      description="Offset of output signal y"
+      causality="parameter"
+      variability="tunable">
+      <Real start="750"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 124 -->
+    <ScalarVariable
+      name="conCO2.startTime"
+      valueReference="16777255"
+      description="Output y = offset for time &lt; startTime"
+      causality="parameter"
+      variability="tunable">
+      <Real
+        declaredType="Modelica.Units.SI.Time"
+        start="0"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 125 -->
+    <ScalarVariable
+      name="CPUtime"
+      valueReference="67108864"
+      causality="output">
+      <Real
+        unit="s"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 126 -->
+    <ScalarVariable
+      name="EventCounter"
+      valueReference="67108865"
+      causality="output">
+      <Real/>
+    </ScalarVariable>
+  </ModelVariables>
+  <ModelStructure>
+    <Outputs>
+      <Unknown index="125"
+        dependencies=""
+        dependenciesKind=""/>
+      <Unknown index="126"
+        dependencies=""
+        dependenciesKind=""/>
+    </Outputs>
+    <Derivatives>
+      <Unknown index="3"
+        dependencies="2"
+        dependenciesKind="dependent"/>
+    </Derivatives>
+    <InitialUnknowns>
+      <Unknown index="3"
+        dependencies="1 2 13 20 21 22 24 25 26 28 29 35 38 39 40 45 56 57 63 64 65 76 78 80 85 96 97"
+        dependenciesKind="dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent dependent"/>
+      <Unknown index="125"
+        dependencies=""
+        dependenciesKind=""/>
+      <Unknown index="126"
+        dependencies=""
+        dependenciesKind=""/>
+    </InitialUnknowns>
+  </ModelStructure>
+</fmiModelDescription>

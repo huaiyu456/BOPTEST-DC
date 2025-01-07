@@ -1,0 +1,11 @@
+setCommandLineOptions("-d=initialization,NLSanalyticJacobian");
+loadModel(Modelica);
+installPackage(Buildings, "11.0.0", exactMatch=false);
+getErrorString();
+loadModel(Buildings);
+getErrorString();
+loadFile("C:/Users/ASUS/Desktop/FDD/git_Boptest/project1-boptest-master/testcases/testcase1/models/SimpleRC.mo");
+getErrorString();
+buildModelFMU(SimpleRC, version="2.0", fmuType="cs", fileNamePrefix="SimpleRC");
+getErrorString();
+quit();
